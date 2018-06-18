@@ -3,6 +3,7 @@
     '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL
 ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
+    @if(tidy_is_xml())
     @foreach($meta as $key => $metaItem)
         @if($key === 'link')
             <{{ $key }} href="{{ url($metaItem) }}"></{{ $key }}>
