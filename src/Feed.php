@@ -22,6 +22,9 @@ class Feed implements Responsable
     /** @var array */
     protected $meta;
 
+	/** @var string */
+	protected $view;
+
     public function __construct($title, $url, $resolver)
     {
         $this->title = $title;
@@ -35,6 +38,11 @@ class Feed implements Responsable
         $this->meta = (is_array($meta)) ? ArrayToXml::convert($meta) : $meta;
     }
 
+    public function setView($view)
+    {
+        $this->view = $view;
+    }
+
     public function toResponse($request): Response
     {
         $meta = [
@@ -44,7 +52,7 @@ class Feed implements Responsable
             'updated' => $this->lastUpdated(),
         ];
 
-        $contents = view('feed::feed', [
+        $contents = view($this->view ?: 'feed::feed', [
             'meta' => $this->meta ?: $meta,
             'items' => $this->items,
         ]);
