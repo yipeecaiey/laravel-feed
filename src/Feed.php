@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Spatie\Feed\Exceptions\InvalidFeedItem;
 use Illuminate\Contracts\Support\Responsable;
+use Spatie\ArrayToXml\ArrayToXml;
 
 class Feed implements Responsable
 {
@@ -21,6 +22,9 @@ class Feed implements Responsable
     /** @var \Illuminate\Support\Collection */
     protected $items;
 
+    /** @var array */
+    protected $meta;
+
     public function __construct($title, $url, $resolver, $view)
     {
         $this->title = $title;
@@ -28,6 +32,11 @@ class Feed implements Responsable
         $this->view = $view;
 
         $this->items = $this->resolveItems($resolver);
+    }
+
+    public function setMeta($meta)
+    {
+        $this->meta = (is_array($meta)) ? ArrayToXml::convert($meta) : $meta;
     }
 
     public function toResponse($request): Response
@@ -40,7 +49,7 @@ class Feed implements Responsable
         ];
 
         $contents = view($this->view, [
-            'meta' => $meta,
+            'meta' => $this->meta ?: $meta,
             'items' => $this->items,
         ]);
 
