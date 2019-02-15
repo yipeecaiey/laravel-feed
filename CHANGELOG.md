@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-feed` will be documented in this file
 
+## 2.1.1 - 2018-08-27
+- Add support for Laravel 5.7
+
+## 2.1.0 - 2018-06-42
+- Add `view` config option
+
 ## 2.0.2 - 2018-02-08
 - Add support for Laravel 5.6
 

@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'feeds' => [
         'main' => [
             /*
@@ -20,7 +19,11 @@ return [
             'url' => '',
 
             'title' => 'My feed',
+
+            /*
+             * The view that will render the feed.
+             */
+            'view' => 'feed::feed',
         ],
     ],
-
 ];

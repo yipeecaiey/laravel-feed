@@ -7,7 +7,7 @@
 [![StyleCI](https://styleci.io/repos/51826021/shield)](https://styleci.io/repos/51826021)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-feed.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-feed)
 
-This package provides an easy way to generate [rss feeds](http://www.whatisrss.com/). There's almost no coding required on your part. Just follow the installation instructions update your config file and you're good to go.
+This package provides an easy way to generate [RSS feeds](http://www.whatisrss.com/). There's almost no coding required on your part. Just follow the installation instructions update your config file and you're good to go.
 
 Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
@@ -38,7 +38,6 @@ Here's what that looks like:
 
 ```php
 return [
-
     'feeds' => [
         'main' => [
             /*
@@ -46,8 +45,8 @@ return [
              * the items that should appear in the feed. For example:
              * 'App\Model@getAllFeedItems'
              *
-             * You can also pass a parameter to that method: 
-             * ['App\Model@getAllFeedItems', 'parameter']
+             * You can also pass an argument to that method:
+             * ['App\Model@getAllFeedItems', 'argument']
              */
             'items' => '',
 
@@ -58,9 +57,12 @@ return [
 
             'title' => 'My feed',
 
+            /*
+             * The view that will render the feed.
+             */
+            'view' => 'feed::feed',
         ],
     ],
-
 ];
 ```
 
@@ -134,19 +136,20 @@ If you prefer, returning an associative array with the necessary keys will do th
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Feed\Feedable;
+use Spatie\Feed\FeedItem;
 
 class NewsItem extends Model implements Feedable
 {
     public function toFeedItem()
     {
-        return [
+        return FeedItem::create([
             'id' => $this->id,
             'title' => $this->title,
             'summary' => $this->summary,
             'updated' => $this->updated_at,
             'link' => $this->link,
             'author' => $this->author,
-        ];
+        ]);
     }
 }
 ```
@@ -186,6 +189,13 @@ return [
             'url' => '/feed',
 
             'title' => 'All newsitems on mysite.com',
+
+            /*
+             * Custom view for the items.
+             *
+             * Defaults to feed::feed if not present.
+             */
+            'view' => 'feed::feed',
         ],
     ],
 
@@ -197,6 +207,39 @@ The `items` key must point to a method that returns one of the following:
 - An array or collection of `Feedable`s
 - An array or collection of `FeedItem`s
 - An array or collection of arrays containing feed item values
+
+### Customizing your feed views
+
+This package provides, out of the box, the `feed::feed` view that displays your feeds details.
+
+However, you could use a custom view per feed by providing a `view` key inside of your feed configuration.
+
+In the following example, we're using the previous `News` feed with a custom `feeds.news` view (located on `resources/views/feeds/news.blade.php`):
+
+```php
+// config/feed.php
+
+return [
+
+    'feeds' => [
+        'news' => [
+            'items' => 'App\NewsItem@getFeedItems',
+
+            'url' => '/feed',
+
+            'title' => 'All newsitems on mysite.com',
+
+            /*
+             * Custom view for the items.
+             *
+             * Defaults to feed::feed if not present.
+             */
+            'view' => 'feeds.news',
+        ],
+    ],
+
+];
+```
 
 ### Automatically generate feed links
 
