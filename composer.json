@@ -1,6 +1,6 @@
 {
-    "name": "spatie/laravel-feed",
-    "description": "Generate rss feeds",
+    "name": "yipeecaiey/laravel-feed",
+    "description": "Generates rss feed",
     "keywords": [
         "spatie",
         "rss",
