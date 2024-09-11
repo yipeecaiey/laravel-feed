@@ -5,9 +5,9 @@ namespace Spatie\Feed;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Spatie\ArrayToXml\ArrayToXml;
 use Spatie\Feed\Exceptions\InvalidFeedItem;
 use Spatie\Feed\Helpers\FeedContentType;
-use Spatie\ArrayToXml\ArrayToXml;
 
 class Feed implements Responsable
 {
