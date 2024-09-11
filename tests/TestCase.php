@@ -3,6 +3,7 @@
 namespace Spatie\Feed\Test;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Spatie\Feed\FeedServiceProvider;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -30,43 +31,64 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     protected function getEnvironmentSetUp($app)
     {
         $feed = [
-            [
+            'feed1' => [
                 'items' => 'Spatie\Feed\Test\DummyRepository@getAll',
                 'url' => '/feed1',
                 'title' => 'Feed 1',
                 'description' => 'This is feed 1 from the unit tests',
                 'language' => 'en-US',
+                'image' => 'http://localhost/image.jpg',
+                'format' => 'atom',
             ],
-            [
+            'feed2' => [
                 'items' => 'Spatie\Feed\Test\DummyRepository@getAll',
                 'url' => '/feed2',
                 'title' => 'Feed 2',
                 'description' => 'This is feed 2 from the unit tests',
                 'language' => 'en-US',
+                'image' => 'http://localhost/image.jpg',
+                'format' => 'atom',
             ],
-            [
+            'feed3' => [
                 'items' => ['Spatie\Feed\Test\DummyRepository@getAllWithArguments', 'first'],
                 'url' => '/feed3',
                 'title' => 'Feed 3',
                 'description' => 'This is feed 3 from the unit tests',
                 'language' => 'en-US',
+                'image' => 'http://localhost/image.jpg',
+                'format' => 'atom',
             ],
-            [
+            'feedcustom' => [
                 'items' => 'Spatie\Feed\Test\DummyRepository@getAll',
                 'url' => '/feed-with-custom-view',
                 'title' => 'Feed with Custom View',
                 'description' => 'This is a feed that uses custom views from the unit tests',
                 'language' => 'en-US',
+                'image' => 'http://localhost/image.jpg',
                 'view' => 'feed::links',
+                'format' => 'atom',
             ],
-            [
+            'feedrss' => [
                 'items' => 'Spatie\Feed\Test\DummyRepository@getAll',
                 'url' => '/feed1.rss',
                 'title' => 'Feed 1 RSS',
                 'description' => 'This is feed 1 as RSS from the unit tests',
                 'language' => 'en-US',
+                'image' => 'http://localhost/image.jpg',
                 'view' => 'feed::rss',
                 'type' => 'application/rss+xml',
+                'format' => 'rss',
+            ],
+            'feedjson' => [
+                'items' => 'Spatie\Feed\Test\DummyRepository@getAll',
+                'url' => '/feed1.json',
+                'title' => 'Feed 1 JSON',
+                'description' => 'This is feed 1 as JSON from the unit tests',
+                'language' => 'en-US',
+                'image' => 'http://localhost/image.jpg',
+                'view' => 'feed::json',
+                'type' => 'application/feed+json',
+                'format' => 'json',
             ],
         ];
 
@@ -78,11 +100,11 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     }
 
 
-    private function renderBlade($app, string $template, array $data = [])
+    private function renderBlade($app, string $template, array $data = []): string
     {
         $tempDirectory = dirname(__FILE__) . '/temp';
 
-        if (!in_array($tempDirectory, $app['view']->getFinder()->getPaths())) {
+        if (! in_array($tempDirectory, $app['view']->getFinder()->getPaths())) {
             $app['view']->addLocation($tempDirectory);
         }
 
@@ -93,15 +115,15 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     }
 
 
-    protected function setUpRoutes($app)
+    protected function setUpRoutes($app): void
     {
-        $app['router']->feeds('feedBaseUrl');
+        Route::feeds('feedBaseUrl');
 
-        $app['router']->get('/test-route', function () use ($app) {
+        Route::get('/test-route', function () use ($app) {
             return $app['view']->make('feed::links');
         });
 
-        $app['router']->get('/test-route-blade-component', function () use ($app) {
+        Route::get('/test-route-blade-component', function () use ($app) {
             return $this->renderBlade($app, '<x-feed-links />');
         });
     }
